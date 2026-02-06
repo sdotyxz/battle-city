@@ -40,6 +40,20 @@ func setup(spawn_markers: Array[Marker2D]):
 	spawn_points = spawn_markers
 	print("📍 SpawnManager: Setup with ", spawn_points.size(), " spawn points")
 
+func setup_from_map(map_system: MapSystem) -> void:
+	# Get enemy spawn positions from map system
+	var spawn_positions = map_system.get_enemy_spawns()
+	
+	# Create Marker2D nodes for each position
+	spawn_points.clear()
+	for i in range(spawn_positions.size()):
+		var marker = Marker2D.new()
+		marker.name = "EnemySpawn_" + str(i)
+		marker.global_position = spawn_positions[i]
+		spawn_points.append(marker)
+	
+	print("📍 SpawnManager: Setup from map with ", spawn_points.size(), " spawn points")
+
 func start_spawning():
 	# Get settings from game manager
 	max_enemies_on_screen = GameManager.max_enemies_on_screen

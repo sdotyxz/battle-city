@@ -12,6 +12,7 @@ var current_difficulty: Difficulty = Difficulty.NORMAL
 var player_lives: int = 3
 var score: int = 0
 var current_level: int = 1
+var max_levels: int = 4
 
 # Enemy tracking
 var total_enemies: int = 20
@@ -22,6 +23,12 @@ var max_enemies_on_screen: int = 4
 # Demo Mode
 var is_demo_mode: bool = false
 var demo_difficulty: Difficulty = Difficulty.NORMAL
+
+# Map System Reference
+var map_system: Node = null  # MapSystem reference (set by game scene)
+
+# Level completion tracking
+var level_completed: bool = false
 
 # References
 var player_tank: Node2D = null
@@ -35,6 +42,9 @@ signal enemy_destroyed()
 signal difficulty_changed(new_difficulty: Difficulty)
 signal demo_started()
 signal demo_ended()
+signal level_changed(new_level: int)
+signal level_completed(level: int)
+signal all_levels_completed()
 
 # Difficulty settings with MECHANIC CHANGES (not just numbers)
 var difficulty_settings = {
@@ -154,6 +164,49 @@ func game_over() -> void:
 func victory() -> void:
 	change_state(GameState.VICTORY)
 	print("🏆 Victory! Final score: ", score)
+	
+	# Check if there are more levels
+	if current_level < max_levels:
+		level_completed = true
+		level_completed.emit(current_level)
+	else:
+		all_levels_completed.emit()
+		print("🎉 All levels completed! Congratulations!")
+
+# Level Management
+func start_level(level: int) -> void:
+	if level < 1 or level > max_levels:
+		push_error("GameManager: Invalid level number " + str(level))
+		return
+	
+	current_level = level
+	level_changed.emit(current_level)
+	
+	print("🎮 Starting level ", current_level)
+	
+	# Reset game state for new level
+	reset_game()
+	
+	# Change to game scene
+	change_scene("res://scenes/game.tscn")
+	
+	# Start playing
+	change_state(GameState.PLAYING)
+
+func next_level() -> void:
+	if current_level < max_levels:
+		start_level(current_level + 1)
+	else:
+		print("🎉 All levels completed!")
+		all_levels_completed.emit()
+
+func restart_level() -> void:
+	start_level(current_level)
+
+func set_level(level: int) -> void:
+	if level >= 1 and level <= max_levels:
+		current_level = level
+		level_changed.emit(current_level)
 
 func reset_game() -> void:
 	score = 0
@@ -166,6 +219,8 @@ func reset_game() -> void:
 	lives_changed.emit(player_lives)
 
 func start_game() -> void:
+	# Start from level 1
+	current_level = 1
 	reset_game()
 	change_state(GameState.PLAYING)
 	print("🎮 Game started!")
