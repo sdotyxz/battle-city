@@ -19,11 +19,13 @@ var enemy_spawns: Array[Marker2D] = []
 var base_marker: Marker2D = null
 
 func _ready():
-	# Get WallSystem reference from parent
-	wall_system = get_parent().get_node_or_null("WallSystem")
+	# WallSystem reference should be set by parent (game.gd)
+	# If not set, try to find it
 	if wall_system == null:
-		# Try to find it in the scene
-		wall_system = get_tree().current_scene.get_node_or_null("WallSystem")
+		wall_system = get_parent().get_node_or_null("WallSystem")
+		if wall_system == null:
+			# Try to find it in the scene
+			wall_system = get_tree().current_scene.get_node_or_null("WallSystem")
 	
 	print("🗺️ MapSystem initialized")
 

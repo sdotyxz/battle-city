@@ -53,6 +53,9 @@ func _setup_systems():
 	map_system = MapSystem.new()
 	add_child(map_system)
 	
+	# Set WallSystem reference manually
+	map_system.wall_system = wall_system
+	
 	# Load level from GameManager
 	var level = GameManager.current_level
 	var map_data = MapGenerator.generate_level(level)
