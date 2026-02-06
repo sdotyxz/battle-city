@@ -6,7 +6,7 @@ extends Resource
 @export var tile_size: int = 16
 @export var wall_layout: Array = []  # 0=empty, 1=brick, 2=steel
 @export var player_spawn_pos: Vector2i = Vector2i(10, 24)
-@export var enemy_spawn_positions: Array[Vector2i] = []
+@export var enemy_spawn_positions: Array = []  # Array of Vector2i
 @export var base_position: Vector2i = Vector2i(12, 24)
 @export var enemy_count: int = 20
 @export var enemy_speed_multiplier: float = 1.0

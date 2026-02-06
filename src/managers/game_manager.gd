@@ -28,7 +28,7 @@ var demo_difficulty: Difficulty = Difficulty.NORMAL
 var map_system: Node = null  # MapSystem reference (set by game scene)
 
 # Level completion tracking
-var level_completed: bool = false
+var is_level_completed: bool = false
 
 # References
 var player_tank: Node2D = null
@@ -167,7 +167,7 @@ func victory() -> void:
 	
 	# Check if there are more levels
 	if current_level < max_levels:
-		level_completed = true
+		is_level_completed = true
 		level_completed.emit(current_level)
 	else:
 		all_levels_completed.emit()

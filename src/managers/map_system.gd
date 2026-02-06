@@ -68,7 +68,8 @@ func clear_map() -> void:
 	enemy_spawns.clear()
 	
 	if player_spawn and is_instance_valid(player_spawn):
-		player_spawn.queue_free()		player_spawn = null
+		player_spawn.queue_free()
+		player_spawn = null
 	
 	if base_marker and is_instance_valid(base_marker):
 		base_marker.queue_free()
