@@ -24,22 +24,28 @@ func _ready():
 
 func load_sounds():
 	# P0 sounds (required)
-	_safely_load("shoot", "res://assets/audio/shoot_player.wav")
-	_safely_load("explosion", "res://assets/audio/explosion_tank.wav")
+	_safely_load("shoot", "res://assets/audio/shoot_player.ogg")
+	_safely_load("explosion", "res://assets/audio/explosion_tank.ogg")
 	
 	# P1 sounds (should have)
-	_safely_load("explosion_small", "res://assets/audio/explosion_wall.wav")
-	_safely_load("ui_click", "res://assets/audio/ui/click_001.wav")
+	_safely_load("explosion_small", "res://assets/audio/explosion_wall.ogg")
+	_safely_load("ui_click", "res://assets/audio/ui/click_001.ogg")
 	
 	# P2 sounds (nice to have)
-	_safely_load("victory", "res://assets/audio/game/jingles_SAX16.ogg")
-	_safely_load("game_over", "res://assets/audio/game/jingles_SAX02.ogg")
+	_safely_load("victory", "res://assets/audio/game/victory.ogg")
+	_safely_load("game_over", "res://assets/audio/game/game_over.ogg")
 
 func _safely_load(name: String, path: String):
-	if FileAccess.file_exists(path):
-		sounds[name] = load(path)
-	else:
+	if not FileAccess.file_exists(path):
 		print("⚠️ Sound not found: ", path)
+		return
+	
+	# Try to load, but catch errors
+	var resource = ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_REUSE)
+	if resource:
+		sounds[name] = resource
+	else:
+		print("⚠️ Failed to load sound: ", path, " (needs import in Godot Editor)")
 
 func play_sound(sound_name: String, volume_db: float = 0.0, pitch: float = 1.0) -> void:
 	if not sounds.has(sound_name):

@@ -20,6 +20,10 @@ var lives: int = 3
 var can_pass_walls: bool = false
 var is_invincible: bool = false
 
+# AI Control
+var is_ai_controlled: bool = false
+var ai_direction: Vector2 = Vector2.ZERO
+
 # Signals
 signal player_died()
 signal bullet_spawned(bullet: Bullet)
@@ -64,15 +68,39 @@ func _physics_process(delta):
 	if not is_alive or PauseManager.is_game_paused():
 		return
 	
-	# Handle movement
-	_handle_movement()
-	
-	# Handle shooting
-	if Input.is_action_just_pressed("shoot"):
-		shoot()
+	if is_ai_controlled:
+		# AI 控制模式 - 由 DemoManager 控制
+		_handle_ai_movement()
+	else:
+		# 玩家控制模式
+		_handle_movement()
+		
+		# Handle shooting (仅玩家控制)
+		if Input.is_action_just_pressed("shoot"):
+			shoot()
 	
 	# Move
 	move_and_slide()
+
+func set_ai_controlled(enabled: bool) -> void:
+	is_ai_controlled = enabled
+	if enabled:
+		velocity = Vector2.ZERO
+
+func set_direction(dir: Vector2) -> void:
+	if not is_ai_controlled:
+		return
+	
+	ai_direction = dir
+	if dir != Vector2.ZERO:
+		direction = dir
+		_update_sprite_direction()
+
+func _handle_ai_movement():
+	if ai_direction != Vector2.ZERO:
+		velocity = ai_direction * speed
+	else:
+		velocity = Vector2.ZERO
 
 func _handle_movement():
 	var input_dir = Vector2.ZERO

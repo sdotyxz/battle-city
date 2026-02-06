@@ -4,8 +4,8 @@ extends Node
 # Prevents frequent instantiation/destruction of bullets
 
 var bullet_scene: PackedScene = preload("res://src/entities/bullet.tscn")
-var pool: Array[Bullet] = []
-var active_bullets: Array[Bullet] = []
+var pool: Array = []  # Use generic Array to avoid circular dependency
+var active_bullets: Array = []
 var pool_size: int = 20
 
 func _ready():
@@ -19,7 +19,7 @@ func _ready():
 		pool.append(bullet)
 		add_child(bullet)
 
-func get_bullet() -> Bullet:
+func get_bullet() -> Node:
 	if pool.size() > 0:
 		var bullet = pool.pop_back()
 		bullet.visible = true
@@ -35,7 +35,7 @@ func get_bullet() -> Bullet:
 		active_bullets.append(bullet)
 		return bullet
 
-func return_bullet(bullet: Bullet) -> void:
+func return_bullet(bullet: Node) -> void:
 	if bullet in active_bullets:
 		active_bullets.erase(bullet)
 	

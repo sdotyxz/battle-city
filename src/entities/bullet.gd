@@ -40,9 +40,9 @@ func _on_body_entered(body: Node2D):
 	if not is_alive:
 		return
 	
-	# Check collision with walls (TileMap)
-	if body is TileMapLayer:
-		_handle_wall_collision(body)
+	# Check collision with walls (StaticBody2D)
+	if body.get_meta("wall_type", "") != "":
+		_handle_wall_collision_body(body)
 		return
 	
 	# Check collision with base
@@ -62,24 +62,9 @@ func _on_body_entered(body: Node2D):
 		destroy()
 		return
 
-func _on_area_entered(area: Area2D):
-	if not is_alive:
-		return
-	
-	# Bullet vs bullet collision
-	if area is Bullet:
-		destroy()
-		area.destroy()
-
-func _handle_wall_collision(wall: TileMapLayer):
-	var tile_pos = wall.local_to_map(to_local(wall.global_position))
-	var tile_data = wall.get_cell_tile_data(tile_pos)
-	
-	if tile_data == null:
-		return
-	
-	var is_destructible = tile_data.get_custom_data("destructible")
-	var is_steel = tile_data.get_custom_data("steel")
+func _handle_wall_collision_body(wall: Node2D):
+	var is_destructible = wall.get_meta("destructible", false)
+	var is_steel = wall.get_meta("steel", false)
 	
 	if is_steel:
 		# Steel walls always block
@@ -88,12 +73,52 @@ func _handle_wall_collision(wall: TileMapLayer):
 		# Brick walls
 		if can_penetrate_bricks and owner_type == "enemy":
 			# Hard mode: enemy bullets penetrate bricks
-			wall.set_cells_terrain_connect([tile_pos], 0, -1)
+			AudioManager.play_explosion(false)
+			# Destroy wall but keep bullet
+			if wall.has_method("queue_free"):
+				wall.queue_free()
+		else:
+			# Normal: destroy wall and bullet
+			AudioManager.play_explosion(false)
+			if wall.has_method("queue_free"):
+				wall.queue_free()
+			destroy()
+
+func _on_area_entered(area: Area2D):
+	if not is_alive:
+		return
+	
+	# Check collision with walls (new Area2D-based walls)
+	if area.get_meta("wall_type", "") != "":
+		_handle_wall_collision_area(area)
+		return
+	
+	# Bullet vs bullet collision
+	if area is Bullet:
+		destroy()
+		area.destroy()
+
+func _handle_wall_collision(wall: TileMapLayer):
+	# Deprecated: Now using Area2D-based walls
+	pass
+
+func _handle_wall_collision_area(wall: Area2D):
+	var is_destructible = wall.get_meta("destructible", false)
+	var is_steel = wall.get_meta("steel", false)
+	
+	if is_steel:
+		# Steel walls always block
+		destroy()
+	elif is_destructible:
+		# Brick walls
+		if can_penetrate_bricks and owner_type == "enemy":
+			# Hard mode: enemy bullets penetrate bricks
+			# The wall will be destroyed by WallSystem
 			AudioManager.play_explosion(false)
 			# Don't destroy bullet, let it continue
 		else:
 			# Normal: destroy wall and bullet
-			wall.set_cells_terrain_connect([tile_pos], 0, -1)
+			# The wall will be destroyed by WallSystem
 			AudioManager.play_explosion(false)
 			destroy()
 

@@ -19,6 +19,10 @@ var enemies_spawned: int = 0
 var enemies_defeated: int = 0
 var max_enemies_on_screen: int = 4
 
+# Demo Mode
+var is_demo_mode: bool = false
+var demo_difficulty: Difficulty = Difficulty.NORMAL
+
 # References
 var player_tank: Node2D = null
 var base_position: Vector2 = Vector2.ZERO
@@ -29,6 +33,8 @@ signal score_changed(new_score: int)
 signal lives_changed(new_lives: int)
 signal enemy_destroyed()
 signal difficulty_changed(new_difficulty: Difficulty)
+signal demo_started()
+signal demo_ended()
 
 # Difficulty settings with MECHANIC CHANGES (not just numbers)
 var difficulty_settings = {
@@ -163,3 +169,46 @@ func start_game() -> void:
 	reset_game()
 	change_state(GameState.PLAYING)
 	print("🎮 Game started!")
+
+func start_demo() -> void:
+	print("🎬 Starting Demo Mode...")
+	is_demo_mode = true
+	
+	# 保存当前难度
+	demo_difficulty = current_difficulty
+	
+	# 设置 EASY 难度演示（玩家无敌，不会死亡）
+	set_difficulty(Difficulty.EASY)
+	
+	# 重置游戏状态
+	reset_game()
+	
+	# 切换到游戏场景
+	change_scene("res://scenes/game.tscn")
+	
+	# 切换到 PLAYING 状态
+	change_state(GameState.PLAYING)
+	
+	demo_started.emit()
+
+func stop_demo() -> void:
+	print("🛑 Stopping Demo Mode...")
+	is_demo_mode = false
+	
+	# 恢复之前的难度
+	set_difficulty(demo_difficulty)
+	
+	# 重置游戏状态
+	change_state(GameState.MENU)
+	
+	# 返回主菜单
+	change_scene("res://scenes/main_menu.tscn")
+	
+	demo_ended.emit()
+
+func change_scene(scene_path: String) -> void:
+	# 延迟一帧执行场景切换，避免在物理处理中切换
+	call_deferred("_deferred_change_scene", scene_path)
+
+func _deferred_change_scene(scene_path: String) -> void:
+	get_tree().change_scene_to_file(scene_path)
