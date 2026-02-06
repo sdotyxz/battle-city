@@ -4,77 +4,77 @@
 
 ### 1.1 Create MapData Resource Class
 **File**: `src/resources/map_data.gd`
-- [ ] Define MapData class extending Resource
-- [ ] Add exported properties:
-  - [ ] level_name: String
-  - [ ] grid_size: Vector2i (default 26x26)
-  - [ ] tile_size: int (default 16)
-  - [ ] wall_layout: Array (2D array: 0=empty, 1=brick, 2=steel)
-  - [ ] player_spawn_pos: Vector2i
-  - [ ] enemy_spawn_positions: Array[Vector2i]
-  - [ ] base_position: Vector2i
-  - [ ] enemy_count: int
-  - [ ] enemy_speed_multiplier: float
+- [x] Define MapData class extending Resource
+- [x] Add exported properties:
+  - [x] level_name: String
+  - [x] grid_size: Vector2i (default 26x26)
+  - [x] tile_size: int (default 16)
+  - [x] wall_layout: Array (2D array: 0=empty, 1=brick, 2=steel)
+  - [x] player_spawn_pos: Vector2i
+  - [x] enemy_spawn_positions: Array[Vector2i]
+  - [x] base_position: Vector2i
+  - [x] enemy_count: int
+  - [x] enemy_speed_multiplier: float
 
 ### 1.2 Create MapSystem Manager
 **File**: `src/managers/map_system.gd`
-- [ ] Define MapSystem class extending Node
-- [ ] Add signals: map_loaded(), map_cleared()
-- [ ] Add properties:
-  - [ ] current_map: MapData
-  - [ ] grid_size, tile_size
-  - [ ] wall_system reference
-  - [ ] player_spawn, enemy_spawns[], base_marker
-- [ ] Implement methods:
-  - [ ] _ready() - get WallSystem reference
-  - [ ] load_map(map_data) - load configuration
-  - [ ] generate_map() - create walls and markers
-  - [ ] clear_map() - remove all walls
-  - [ ] _generate_walls() - create wall entities
-  - [ ] _place_markers() - position spawn points
-  - [ ] world_to_grid(pos) - coordinate conversion
-  - [ ] grid_to_world(pos) - coordinate conversion
-  - [ ] get_player_spawn() - return Vector2
-  - [ ] get_enemy_spawns() - return Array[Vector2]
-  - [ ] get_base_position() - return Vector2
-  - [ ] get_wall_at(pos) - return int
-  - [ ] is_valid_position(pos) - return bool
+- [x] Define MapSystem class extending Node
+- [x] Add signals: map_loaded(), map_cleared()
+- [x] Add properties:
+  - [x] current_map: MapData
+  - [x] grid_size, tile_size
+  - [x] wall_system reference
+  - [x] player_spawn, enemy_spawns[], base_marker
+- [x] Implement methods:
+  - [x] _ready() - get WallSystem reference
+  - [x] load_map(map_data) - load configuration
+  - [x] generate_map() - create walls and markers
+  - [x] clear_map() - remove all walls
+  - [x] _generate_walls() - create wall entities
+  - [x] _place_markers() - position spawn points
+  - [x] world_to_grid(pos) - coordinate conversion
+  - [x] grid_to_world(pos) - coordinate conversion
+  - [x] get_player_spawn() - return Vector2
+  - [x] get_enemy_spawns() - return Array[Vector2]
+  - [x] get_base_position() - return Vector2
+  - [x] get_wall_at(pos) - return int
+  - [x] is_valid_position(pos) - return bool
 
 ### 1.3 Create MapGenerator
 **File**: `src/generators/map_generator.gd`
-- [ ] Define MapGenerator class extending RefCounted
-- [ ] Implement generate_level_1():
-  - [ ] Create MapData instance
-  - [ ] Generate border steel walls
-  - [ ] Add brick obstacles
-  - [ ] Set player spawn at (10, 24)
-  - [ ] Set enemy spawns at (6,1), (13,1), (20,1)
-  - [ ] Set base at (12, 24) with steel protection
-  - [ ] enemy_count = 20
-- [ ] Implement generate_level_2() - maze layout
-- [ ] Implement generate_level_3() - fortress layout
-- [ ] Implement generate_level_4() - challenge layout
+- [x] Define MapGenerator class extending RefCounted
+- [x] Implement generate_level_1():
+  - [x] Create MapData instance
+  - [x] Generate border steel walls
+  - [x] Add brick obstacles
+  - [x] Set player spawn at (10, 24)
+  - [x] Set enemy spawns at (6,1), (13,1), (20,1)
+  - [x] Set base at (12, 24) with steel protection
+  - [x] enemy_count = 20
+- [x] Implement generate_level_2() - maze layout
+- [x] Implement generate_level_3() - fortress layout
+- [x] Implement generate_level_4() - challenge layout
 
 ## Phase 2: System Integration
 
 ### 2.1 Modify Game Scene
 **File**: `src/game.gd`
-- [ ] Add map_system property
-- [ ] In _setup_systems():
-  - [ ] Create MapSystem instance
-  - [ ] Add as child
-  - [ ] Load level data: MapGenerator.generate_level_1()
-  - [ ] Call map_system.load_map()
-- [ ] In _spawn_player():
-  - [ ] Use map_system.get_player_spawn() for position
-- [ ] In _spawn_base():
-  - [ ] Use map_system.get_base_position() for position
-- [ ] Remove hard-coded wall generation code
+- [x] Add map_system property
+- [x] In _setup_systems():
+  - [x] Create MapSystem instance
+  - [x] Add as child
+  - [x] Load level data: MapGenerator.generate_level_1()
+  - [x] Call map_system.load_map()
+- [x] In _spawn_player():
+  - [x] Use map_system.get_player_spawn() for position
+- [x] In _spawn_base():
+  - [x] Use map_system.get_base_position() for position
+- [x] Remove hard-coded wall generation code
 
 ### 2.2 Modify SpawnManager
 **File**: `src/managers/spawn_manager.gd`
-- [ ] Add setup_from_map(map_system) method
-- [ ] Use map_system.get_enemy_spawns() for spawn points
+- [x] Add setup_from_map(map_system) method
+- [x] Use map_system.get_enemy_spawns() for spawn points
 
 ### 2.3 Create Level Save Tool
 **File**: `tools/save_levels.gd` (EditorScript)
@@ -85,11 +85,11 @@
 
 ### 3.1 Modify GameManager
 **File**: `src/managers/game_manager.gd`
-- [ ] Add map_system property
-- [ ] Add current_level, max_levels properties
-- [ ] Implement start_level(level) method
-- [ ] Implement next_level() method
-- [ ] Add level completion detection
+- [x] Add map_system property
+- [x] Add current_level, max_levels properties
+- [x] Implement start_level(level) method
+- [x] Implement next_level() method
+- [x] Add level completion detection
 
 ### 3.2 Add Level Transition
 - [ ] Create level transition UI/effect
@@ -120,12 +120,12 @@
 
 ## Acceptance Criteria
 
-- [ ] MapData resource class created
-- [ ] MapSystem manager created with all methods
-- [ ] MapGenerator creates 4 distinct levels
-- [ ] Game scene integrated with MapSystem
-- [ ] SpawnManager uses map spawn points
-- [ ] Level switching implemented
+- [x] MapData resource class created
+- [x] MapSystem manager created with all methods
+- [x] MapGenerator creates 4 distinct levels
+- [x] Game scene integrated with MapSystem
+- [x] SpawnManager uses map spawn points
+- [x] Level switching implemented
 - [ ] All unit tests pass
 - [ ] All integration tests pass
 - [ ] Performance maintained at 60 FPS
